@@ -6,7 +6,7 @@
     </header>
     <div class="main">
       <ul class="todo-list">
-        <li class="todo" v-for="todo in todos" :class="{completed: todo.completed}">
+        <li class="todo" v-for="todo in filteredTodos" :class="{completed: todo.completed}">
           <div class="view">
             <input type="checkbox" class="toggle" v-model="todo.completed">
             <label>{{todo.name}}</label>
@@ -15,37 +15,54 @@
       </ul>
     </div>
     <footer class="footer">
-      <span class="todo-count"><strong>{{ remaining }}</strong> Tâches à faire</span>
+      <span class="todo-count"><strong>{{ remaining }}</strong> Tâche(s) à faire</span>
+      <ul class="filters">
+        <li><a href="#" :class="{selected: filter === 'all'}" @click.prevent="filter = 'all'">Toutes</a></li>
+        <li><a href="#" :class="{selected: filter === 'todo'}" @click.prevent="filter = 'todo'">A faire</a></li>
+        <li><a href="#" :class="{selected: filter === 'done'}" @click.prevent="filter = 'done'">Faites</a></li>
+      </ul>
     </footer>
   </section>
 </template>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-      todos: [{
-        name: 'Tache de test',
-        completed: false
-      }],
+      todos: [
+        {
+          name: 'Tache de test',
+          completed: false
+        }
+      ],
       newTodo: '',
-    }
+      filter: 'all'
+    };
   },
   methods: {
-    addTodo () {
+    addTodo() {
       this.todos.push({
         name: this.newTodo,
         completed: false
-      })
-      this.newTodo = ''
+      });
+      this.newTodo = '';
     }
   },
   computed: {
-    remaining () {
-      this.remaining = this.todos.filter(el => !el.completed)
+    remaining() {
+      return this.todos.filter(todo => !todo.completed).length;
+    },
+    filteredTodos() {
+      if (this.filter === 'todo') {
+        return this.todos.filter(todo => !todo.completed)
+      } else if (this.filter === 'done') {
+        return this.todos.filter(todo => todo.completed)
+      } else {
+        return this.todos
+      }
     }
   }
-}
+};
 </script>
 
-<style src="./todos.css"></style>
+<style src='./todos.css'></style>
